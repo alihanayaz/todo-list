@@ -1,0 +1,29 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('@assets/Inter-Regular.woff');
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+header {
+  background-color: #666;
+  text-align: center;
+  font-size: 35px;
+  color: white;
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+  background-color: #f1f1f1;
+}
