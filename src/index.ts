@@ -15,7 +15,7 @@ function renderProjects(projects: Project[]) {
   projects.forEach((project) => {
     const projectContainer = document.createElement('div');
     const projectItem = document.createElement('div');
-    projectContainer.classList.add('task');
+    projectContainer.classList.add('project');
     const deleteButton = document.createElement('button');
     deleteButton.textContent = 'Delete';
     deleteButton.classList.add('button', 'delete');
@@ -68,6 +68,13 @@ function renderTasks(project: Project) {
 
 function selectProject(project: Project) {
   currentProject = project;
+  const foundProjects = document.querySelectorAll('.project');
+  foundProjects.forEach((p) => {
+    p.classList.remove('selected');
+    if (p.children[0].textContent === project.name) {
+      p.classList.add('selected');
+    }
+  });
   renderTasks(project);
 }
 
@@ -98,6 +105,13 @@ function createTask() {
 }
 
 function showTaskDetails(task: Todo) {
+  const foundTasks = document.querySelectorAll('.task');
+  foundTasks.forEach((t) => {
+    t.classList.remove('selected');
+    if (t.children[0].textContent === task.title) {
+      t.classList.add('selected');
+    }
+  });
   const detailsContainer = document.getElementById('task-details');
   detailsContainer.innerHTML = '';
   const heading = document.createElement('h2');
