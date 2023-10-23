@@ -10,10 +10,21 @@
   <body>
     <header>
       <h1>Todo List</h1>
-      <button class="button" id="new-project">Add new project</button>
     </header>
-    <main>
-      <div id="project-list"></div>
-    </main>
+    <div class="container">
+      <div class="sidebar">
+        <h2>Projects</h2>
+        <button class="button create" id="create-project">
+          Create Project
+        </button>
+        <div class="list" id="project-list"></div>
+      </div>
+      <div class="main">
+        <h2>Tasks</h2>
+        <button class="button create" id="create-task">Create Task</button>
+        <div class="list" id="tasks-list"></div>
+      </div>
+      <div class="task-details" id="task-details"></div>
+    </div>
   </body>
 </html>

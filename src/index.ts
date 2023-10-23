@@ -1,53 +1,141 @@
 import './style.scss';
 import { Project } from './project';
+import { Todo } from './todo';
 import { saveData, loadData } from './storage';
-import { slugify } from './helpers';
 
-let projects: Project[] = loadData();
+let currentProject: Project;
 
-document.getElementById('new-project')?.addEventListener('click', () => {
-  const newProjectName = prompt('Enter a name for your project:');
-  if (newProjectName) {
-    const newProject = new Project(newProjectName);
+function renderProjects(projects: Project[]) {
+  const projectList = document.getElementById('project-list');
+  projectList.innerHTML = '';
+  if (!projects.length) {
+    projectList.innerHTML = 'No projects yet.';
+    return;
+  }
+  projects.forEach((project) => {
+    const projectContainer = document.createElement('div');
+    const projectItem = document.createElement('div');
+    projectContainer.classList.add('task');
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.classList.add('button', 'delete');
+    deleteButton.addEventListener('click', () => {
+      projects.splice(projects.indexOf(project), 1);
+      saveData(projects);
+      renderProjects(projects);
+      if (currentProject === project) {
+        selectProject(projects[0]);
+      }
+    });
+    projectItem.textContent = project.name;
+    projectItem.addEventListener('click', () => selectProject(project));
+    projectContainer.appendChild(projectItem);
+    projectContainer.appendChild(deleteButton);
+    projectList.appendChild(projectContainer);
+  });
+}
+
+function renderTasks(project: Project) {
+  clearTaskDetails();
+  const tasksList = document.getElementById('tasks-list');
+  tasksList.innerHTML = '';
+  if (!project || !project.todos.length) {
+    tasksList.innerHTML = 'No tasks yet.';
+    return;
+  }
+  project.todos.forEach((todo) => {
+    const taskContainer = document.createElement('div');
+    const taskItem = document.createElement('div');
+    const deleteButton = document.createElement('button');
+    taskContainer.classList.add('task');
+    taskItem.textContent = todo.title;
+    if (todo.isComplete) {
+      taskItem.classList.add('completed');
+    }
+    taskItem.addEventListener('click', () => showTaskDetails(todo));
+    deleteButton.textContent = 'Delete';
+    deleteButton.classList.add('button', 'delete');
+    deleteButton.addEventListener('click', () => {
+      project.removeTodo(todo);
+      saveData(projects);
+      renderTasks(project);
+    });
+    tasksList.appendChild(taskContainer);
+    taskContainer.appendChild(taskItem);
+    taskContainer.appendChild(deleteButton);
+  });
+}
+
+function selectProject(project: Project) {
+  currentProject = project;
+  renderTasks(project);
+}
+
+function createProject() {
+  const projectName = prompt('Enter project name:');
+  if (projectName) {
+    const newProject = new Project(projectName);
     projects.push(newProject);
     saveData(projects);
-    updateProjectList();
-  }
-});
-
-function updateProjectList() {
-  const projectList = document.getElementById('project-list');
-  if (projectList) {
-    projectList.innerHTML = '';
-    projects.forEach((project) => {
-      const projectItem = document.createElement('div');
-      const projectTitle = document.createElement('h3');
-      projectTitle.textContent = project.name;
-      projectItem.setAttribute('class', 'project');
-      projectItem.setAttribute('data-project', slugify(project.name));
-
-      const deleteButton = document.createElement('img');
-      deleteButton.src = '../assets/delete.svg';
-      deleteButton.setAttribute('class', 'delete-icon');
-      deleteButton.addEventListener('click', () => {
-        const projectName = projectItem.getAttribute('data-project');
-        if (projectName) {
-          const confirmDelete = confirm(
-            `Are you sure you want to delete the project "${project.name}"?`
-          );
-          if (confirmDelete) {
-            projects = projects.filter((p) => slugify(p.name) !== projectName);
-            saveData(projects);
-            updateProjectList();
-          }
-        }
-      });
-
-      projectItem.appendChild(deleteButton);
-      projectItem.appendChild(projectTitle);
-      projectList.appendChild(projectItem);
-    });
+    renderProjects(projects);
+    selectProject(newProject);
   }
 }
 
-updateProjectList();
+function createTask() {
+  if (!currentProject) {
+    alert('Select a project first.');
+    return;
+  }
+  const title = prompt('Task title:');
+  const description = prompt('Task description:');
+  if (title) {
+    const newTask = new Todo(title, description);
+    currentProject.addTodo(newTask);
+    saveData(projects);
+    renderTasks(currentProject);
+  }
+}
+
+function showTaskDetails(task: Todo) {
+  const detailsContainer = document.getElementById('task-details');
+  detailsContainer.innerHTML = '';
+  const heading = document.createElement('h2');
+  const taskTitle = document.createElement('h3');
+  const taskDescription = document.createElement('p');
+  const completedArea = document.createElement('div');
+  const isTaskComplete = document.createElement('input');
+  heading.textContent = 'Task Details';
+  taskTitle.textContent = task.title;
+  taskDescription.textContent = task.description;
+  isTaskComplete.type = 'checkbox';
+  isTaskComplete.checked = task.isComplete;
+  isTaskComplete.addEventListener('change', () => {
+    task.isComplete = !task.isComplete;
+    saveData(projects);
+    renderTasks(currentProject);
+  });
+  detailsContainer.appendChild(heading);
+  detailsContainer.appendChild(taskTitle);
+  detailsContainer.appendChild(taskDescription);
+  completedArea.appendChild(document.createTextNode('Completed: '));
+  completedArea.appendChild(isTaskComplete);
+  detailsContainer.appendChild(completedArea);
+}
+
+function clearTaskDetails() {
+  const detailsContainer = document.getElementById('task-details');
+  detailsContainer.innerHTML = '';
+}
+
+const projects = loadData();
+if (projects.length > 0) {
+  selectProject(projects[0]);
+}
+
+renderProjects(projects);
+
+document
+  .getElementById('create-project')
+  .addEventListener('click', createProject);
+document.getElementById('create-task').addEventListener('click', createTask);

@@ -1,3 +1,4 @@
+@import './variables';
 @font-face {
   font-family: 'Inter';
   src: url('@assets/Inter-Regular.woff');
@@ -5,80 +6,111 @@
 
 * {
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 body {
   font-family: 'Inter', sans-serif;
   min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
   margin: 0;
+  padding: 0;
+  background-color: $primary-color;
 }
 
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 24px;
-  gap: 12px;
-  background-color: #666;
+  background-color: $secondary-color;
+  color: $primary-color;
   text-align: center;
-  color: white;
+  padding: 10px 0;
 }
 
-main {
-  flex: 1;
-  padding: 20px;
-  background-color: #f1f1f1;
-}
-
-#project-list {
+.container {
   display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 10px;
   flex-wrap: wrap;
-  margin-top: 10px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 
-  .project {
-    display: flex;
-    flex-direction: column;
-    width: 250px;
-    min-height: 250px;
-    height: max-content;
-    padding: 16px;
-    border-radius: 4px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    transition: 0.3s;
-
-    h3 {
-      text-align: center;
-    }
-
-    &:hover {
-      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-    }
-
-    .delete-icon {
-      width: 20px;
-      height: 20px;
+  .list {
+    div {
+      padding: 10px;
       cursor: pointer;
+      transition: background-color 0.2s;
+      &:hover {
+        background-color: #ddd;
+      }
+    }
+  }
+
+  .task {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    flex-wrap: wrap;
+    &:hover {
+      background-color: #ddd;
+    }
+  }
+
+  h2 {
+    margin-top: 0;
+  }
+
+  .completed {
+    text-decoration: line-through;
+    color: #777;
+  }
+
+  .sidebar {
+    flex: 1;
+    padding: 10px;
+    border-right: 1px solid #ccc;
+    min-width: 200px;
+  }
+  .main {
+    padding: 10px;
+    min-width: 600px;
+    border-right: 1px solid #ccc;
+  }
+
+  .task-details {
+    padding: 10px;
+    min-width: 300px;
+
+    input[type='checkbox'] {
+      width: 1rem;
+      height: 1rem;
     }
   }
 }
 
 .button {
-  background-color: #4caf50;
   border: none;
   color: white;
-  padding: 12px 18px;
+  padding: 8px;
   text-align: center;
   text-decoration: none;
-  font-size: 16px;
-  border-radius: 6px;
+  font-size: 1rem;
+  border-radius: 2px;
   cursor: pointer;
-}
 
-.hidden {
-  display: none;
+  &.create {
+    background-color: #4caf50;
+    margin-bottom: 12px;
+    &:hover {
+      background-color: #46a049;
+    }
+  }
+
+  &.delete {
+    background-color: #f44336;
+    &:hover {
+      background-color: #da190b;
+    }
+  }
 }
