@@ -79,14 +79,27 @@ function selectProject(project: Project) {
 }
 
 function createProject() {
-  const projectName = prompt('Enter project name:');
-  if (projectName) {
-    const newProject = new Project(projectName);
-    projects.push(newProject);
-    saveData(projects);
-    renderProjects(projects);
-    selectProject(newProject);
-  }
+  const projectPopup = document.getElementById("project-popup");
+  const projectForm = document.getElementById("project-form");
+  const projectName = document.getElementById("project-name") as HTMLInputElement;
+  const closeProjectPopup = document.getElementById("close-project-popup");
+  projectPopup.classList.add("active");
+  closeProjectPopup.addEventListener("click", () => {
+    projectName.value = "";
+    projectPopup.classList.remove("active");
+  })
+  projectForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (projectName.value.length) {
+      const newProject = new Project(projectName.value);
+      projects.push(newProject);
+      saveData(projects);
+      renderProjects(projects);
+      selectProject(newProject);
+      projectName.value = "";
+      projectPopup.classList.remove("active");
+    }
+  })
 }
 
 function createTask() {
@@ -94,14 +107,29 @@ function createTask() {
     alert('Select a project first.');
     return;
   }
-  const title = prompt('Task title:');
-  const description = prompt('Task description:');
-  if (title) {
-    const newTask = new Todo(title, description);
-    currentProject.addTodo(newTask);
-    saveData(projects);
-    renderTasks(currentProject);
-  }
+  const taskPopup = document.getElementById("task-popup");
+  const taskForm = document.getElementById("task-form");
+  const taskName = document.getElementById("task-name") as HTMLInputElement;
+  const taskDescription = document.getElementById("task-description") as HTMLInputElement;
+  const closeTaskPopup = document.getElementById("close-task-popup");
+  taskPopup.classList.add("active");
+  closeTaskPopup.addEventListener("click", () => {
+    taskName.value = "";
+    taskDescription.value = "";
+    taskPopup.classList.remove("active");
+  })
+  taskForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (taskName.value.length && taskDescription.value.length) {
+      const newTask = new Todo(taskName.value, taskDescription.value);
+      currentProject.addTodo(newTask);
+      saveData(projects);
+      renderTasks(currentProject);
+      taskName.value = "";
+      taskDescription.value = "";
+      taskPopup.classList.remove("active");
+    }
+  })
 }
 
 function showTaskDetails(task: Todo) {

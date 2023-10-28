@@ -25,6 +25,28 @@
         <div class="list" id="tasks-list"></div>
       </div>
       <div class="task-details" id="task-details"></div>
+      <div class="popup" id="project-popup">
+        <div class="popup-content">
+          <span class="close" id="close-project-popup">&times;</span>
+          <form id="project-form">
+            <label for="project-name">Enter a project name</label>
+            <input id="project-name" type="text" />
+            <button class="button create" type="submit">Submit</button>
+          </form>
+        </div>
+      </div>
+      <div class="popup" id="task-popup">
+        <div class="popup-content">
+          <span class="close" id="close-task-popup">&times;</span>
+          <form id="task-form">
+            <label for="task-name">Enter a task name</label>
+            <input id="task-name" type="text" />
+            <label for="task-description">Enter task details</label>
+            <input id="task-description" type="text" />
+            <button class="button create" type="submit">Submit</button>
+          </form>
+        </div>
+      </div>
     </div>
   </body>
 </html>
