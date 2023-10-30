@@ -8,5 +8,9 @@ export function saveData(projects: Project[]) {
 
 export function loadData(): Project[] {
     const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+    if (data) {
+        const projectData = JSON.parse(data);
+        return projectData.map((project: Project) => new Project(project.name, project.todos));
+    }
+    return [];
 }

@@ -6,8 +6,8 @@ import { projects } from './index';
 
 let currentProject: Project;
 
-export function initialize(projects: Project[]) {
-    renderProjects(projects);
+export function initialize(projectList: Project[]) {
+    renderProjects(projectList);
     document.getElementById('create-project')?.addEventListener('click', createProject);
     document.getElementById('create-task')?.addEventListener('click', createTask);
 }
@@ -27,12 +27,7 @@ export function renderProjects(projects: Project[]) {
         deleteButton.textContent = 'Delete';
         deleteButton.classList.add('button', 'delete');
         deleteButton.addEventListener('click', () => {
-            projects.splice(projects.indexOf(project), 1);
-            saveData(projects);
-            renderProjects(projects);
-            if (currentProject === project) {
-                selectProject(projects[0]);
-            }
+            deleteProject(project);
         });
         projectItem.textContent = project.name;
         projectItem.addEventListener('click', () => selectProject(project));
@@ -82,7 +77,11 @@ export function selectProject(project: Project) {
             p.classList.add('selected');
         }
     });
-    renderTasks(project);
+    if (currentProject) {
+        renderTasks(currentProject);
+    } else {
+        clearTaskDetails();
+    }
 }
 
 export function createProject() {
@@ -129,7 +128,7 @@ export function createTask() {
         event.preventDefault();
         if (taskName.value.length && taskDescription.value.length) {
             const newTask = new Todo(taskName.value, taskDescription.value);
-            currentProject && currentProject.addTodo(newTask);
+            currentProject.addTodo(newTask);
             saveData(projects);
             renderTasks(currentProject);
             taskName.value = '';
@@ -140,7 +139,8 @@ export function createTask() {
 }
 
 export function showTaskDetails(task: Todo) {
-    const foundTasks = document.querySelectorAll('.task');
+    const tasksList = document.getElementById('tasks-list');
+    const foundTasks = tasksList.querySelectorAll('.task');
     foundTasks.forEach((t) => {
         t.classList.remove('selected');
         if (t.children[0].textContent === task.title) {
@@ -160,7 +160,7 @@ export function showTaskDetails(task: Todo) {
     isTaskComplete.type = 'checkbox';
     isTaskComplete.checked = task.isComplete;
     isTaskComplete.addEventListener('change', () => {
-        task.toggleCompletion();
+        task.isComplete = !task.isComplete;
         saveData(projects);
         renderTasks(currentProject);
     });
@@ -175,4 +175,16 @@ export function showTaskDetails(task: Todo) {
 function clearTaskDetails() {
     const detailsContainer = document.getElementById('task-details');
     detailsContainer.innerHTML = '';
+}
+
+function deleteProject(project: Project) {
+    const index = projects.indexOf(project);
+    if (index !== -1) {
+        projects.splice(index, 1);
+        saveData(projects);
+        renderProjects(projects);
+        if (currentProject === project) {
+            selectProject(projects[0]);
+        }
+    }
 }

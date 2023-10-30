@@ -4,9 +4,9 @@ export class Project {
     name: string;
     todos: Todo[];
 
-    constructor(name: string) {
+    constructor(name: string, todos: Todo[] = []) {
         this.name = name;
-        this.todos = [];
+        this.todos = todos;
     }
 
     addTodo(todo: Todo) {
